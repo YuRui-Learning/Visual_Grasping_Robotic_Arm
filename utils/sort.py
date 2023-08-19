@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 import math
+import pandas as pd
+
 
 class Sort_bbox():
 
@@ -11,7 +13,7 @@ class Sort_bbox():
         self.sort_count = 0
         self.count_flag = {0:False, 1:False, 2:False, 3:False, 4:False,5:False,
                            6:False, 7:False, 8:False, 9:False, 10:False, 11:False,
-                           12:False, 13:False,14:False,15:False}
+                           12:False, 13:False,14:False,15:False,16:False}
 
     def insert(self,bbox):
         self.bbox.append(bbox)
@@ -34,8 +36,14 @@ class Sort_bbox():
         return dis
 
 
-    def sort(self,bbox,img):
-        # find max min
+    def sort(self,bbox,img,labellist):
+        # store list
+        cx_list = []
+        cy_list = []
+        for i in range(len(bbox)):
+            cx_list.append(bbox[i][4])
+            cy_list.append(bbox[i][5])
+        # find max
         zero_matrix = np.zeros(len(bbox))
         bbox = np.insert(bbox, len(bbox[0]), zero_matrix, axis=1)  # sort_id
         bbox = np.insert(bbox, len(bbox[0]), zero_matrix, axis=1)  # in or out
@@ -61,6 +69,12 @@ class Sort_bbox():
         self.function_dict[1] = self.linear_regression(line2)
         self.function_dict[2] = self.linear_regression(line3)
         self.function_dict[3] = self.linear_regression(line4)
+        # after get four conrner delete hole
+        delete_count = 0
+        for id,label in enumerate(labellist):
+            if label == 3:
+                bbox = np.delete(bbox, id - delete_count, axis=0)
+                delete_count += 1
         # predcit
         for i in range(len(self.function_dict)):
             k, b, a1 = self.function_dict[i]
@@ -128,6 +142,15 @@ class Sort_bbox():
             else:
                 continue
 
+
         imgnew = cv2.polylines(image_new, pts=[line1, line2, line3, line4], isClosed=False, color=[0,0,0], thickness=2, lineType=cv2.LINE_8)
+
+        data = {'x': cx_list,
+                'y': cy_list}
+        # 创建DataFrame
+        df = pd.DataFrame(data)
+        # 保存数据为CSV文件
+        df.to_csv('pca/data.csv', index=False)
+
         return imgnew,bbox
 

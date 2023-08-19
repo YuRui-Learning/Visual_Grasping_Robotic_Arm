@@ -3,6 +3,10 @@ import random
 import cv2
 
 class Blot_class():
+    '''
+    this function is to store the mean and update the result
+    param: weight height label
+    '''
     def __init__(self):
         self.dictonry = {
             0:{
@@ -31,3 +35,14 @@ class Blot_class():
         else:
             self.dictonry[label]['width_mean'] = wight
             self.dictonry[label]['height_mean'] = height
+
+    def prior(self):
+        self.dictonry[0]['width_mean'] = 99
+        self.dictonry[0]['height_mean'] = 108
+        self.dictonry[0]['number'] = 1
+        self.dictonry[1]['width_mean'] = 86
+        self.dictonry[1]['height_mean'] = 95
+        self.dictonry[1]['number'] = 1
+        self.dictonry[2]['width_mean'] = 70
+        self.dictonry[2]['height_mean'] = 78
+        self.dictonry[2]['number'] = 1

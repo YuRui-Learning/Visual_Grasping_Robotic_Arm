@@ -5,6 +5,11 @@ import numpy as np
 所以排序优先级：内外圈参数 > 大小 > id
 '''
 def send_sort(data):
+    '''
+
+    :param data: data list
+    :return: sort list
+    '''
     count = 0 # 遍历排完序的结果，以免每次重复遍历
     store_list = []
     sorted_matrix = data[data[:, 7].argsort()] # 先根据id排
@@ -24,8 +29,13 @@ def send_sort(data):
             else:
                 continue
             epoch_len = len(cache_list)  # 该圈数和label的所有结果
-            fast_step = epoch_len // 2
-            slow_step = epoch_len // 4
+            # 针对有3个时候有点奇怪
+            if epoch_len == 3:
+                fast_step = 2
+                slow_step = 1
+            else:
+                fast_step = epoch_len // 2
+                slow_step = epoch_len // 4
             flag = {} # 用来寄存标志位
             for i in range(epoch_len): flag[i] = False
             store_index = 0 # 从0开始存储

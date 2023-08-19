@@ -6,6 +6,7 @@ class Blot_bbox():
             0:[],
             1:[],
             2:[],
+            3:[],
 
         }
     def insert(self,label,bbox):
